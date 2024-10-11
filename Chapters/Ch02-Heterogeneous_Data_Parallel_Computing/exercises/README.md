@@ -56,8 +56,8 @@ Each thread calculates 2 elements so the number of elements processed by the pre
 **Correct answer:** C
 
 ```
-ceil(8000/1024) = 4 blocks
-4 blocks * 1024 threads per blocks = 8192 threads 
+ceil(8000/1024) = 8 blocks
+8 blocks * 1024 threads per blocks = 8192 threads 
 ```
 
 ---
@@ -115,9 +115,56 @@ cudaMalloc needs a generic pointer.
 
 ---
 
-*9. A new summer intern was frustrated with CUDA. He has been complaining that CUDA is very tedious: he had to declare many functions that he plans to execute on both the host and the device twice, once as a host function and once as a device function. What is your response?*
+*9. Consider the following CUDA kernel and the corresponding host function that calls it:*
+```C {line-numbers}
+__global__ void foo_kernel(float* a, float* b, unsigned int N){
+    unsigned int i = blockIdx.x*blockDim.x + threadIdx.x;
+    if(i < N) {
+        b[i] = 2.7f * a[i] - 4.3f;
+    }
+}
 
+void foo(float* a_d, float* b_d) {
+    unsigned int N = 200000;
+    foo_kernel <<<(N+128–1)/128, 128>>>(a_d, b_d, N);
+}
 ```
+
+*a. What is the number of threads per block?  
+b. What is the number of threads in the grid?  
+c. What is the number of blocks in the grid?  
+d. What is the number of threads that execute the code on line 02?  
+e. What is the number of threads that execute the code on line 04?*
+
+**Correct answer:**  
+a. 128
+```
+blockDim
+```
+b. 200064
+```
+gridDim * blockDim
+(N+128–1)/128 * 128
+```
+c. 1564
+```
+blockDim
+```
+d. 200064
+```
+number of threads in the grid
+```
+e. 200000
+```
+number of threads in the grid inside boundary
+```
+
+---
+
+*10. A new summer intern was frustrated with CUDA. He has been complaining that CUDA is very tedious: he had to declare many functions that he plans to execute on both the host and the device twice, once as a host function and once as a device function. What is your response?*
+
+**Correct answer:**  
+```C
 You can declare both functions at the same time using "__host__" and "__device__" before function declaration.
 
 __host__ __device__ function_return_type function_name(...) 

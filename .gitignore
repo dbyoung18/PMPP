@@ -3,3 +3,5 @@ Performance-Tests-NvBench/build
 
 # Ignore out files
 Performance-Tests-NvBench/*/*.out
+
+**/.DS_Store
